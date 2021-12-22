@@ -20,6 +20,7 @@ function App() {
         <Login />
       </Route>
       <PrivateRoutes path="/Add_Roles" />
+      <PrivateRoutes path="/property_type" />
       {/* <Route exact path="/" component={CompLayout}></Route> */}
       <Route exact path="/comp" component={Comp}></Route>
       {/* <Route exact path="/dashboard" component={Layout}></Route> */}

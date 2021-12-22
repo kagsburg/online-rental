@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-toastify';
 import AuthorizePostRequest from '../api/authorizePostRequest';
 import AuthorizeGetRequest from "../api/authorizeGetRequest";
@@ -30,10 +30,18 @@ const useFakeMutation = () => {
 };
 export default function Roles() {
   const mutateRow = useFakeMutation();
+  const [sortModel, setSortModel] = useState([
+    {
+      field: 'id',
+      sort: 'desc',
+    },
+  ]);
+  const [selectionModel, setSelectionModel] = useState([]);
     const [Role, setRole] = useState('');
     const [Rolelist, setRolelist] = useState([])
     const [Roleedit, setRoleedit] = useState([])
     const [EditTitle, setEditTitle] = useState('')
+    const [deleteBtn, setdelete] = useState(false)
     const [EditDescription, setEditDescription] = useState('')
     const [Editid, setEditid] = useState('')
     const [Roleerr, setRoleerr] = useState(false)
@@ -101,23 +109,18 @@ export default function Roles() {
     const onChangeDescrpition = (e)=>{
         setdescription(e.target.value);
     }
-    const onChangeEditTitle = (e) =>{
-        setEditTitle(e.target.value)
-    }
-    
-    const onChangeEditDescription = (e) =>{
-        setEditDescription(e.target.value)
-    }
     const onSubmitRole = () =>{
        
         
         if( Role === ''){
             setRoleerr(true)
+            return;
         }
          if( description === ''){
             setdescerr(true)
+            return;
         }
-        else{
+        
             setloading(true)
             setRoleerr(false)
             setdescerr(false)
@@ -142,15 +145,8 @@ export default function Roles() {
                     AuthorizeGetRequest('api/roles').then((response)=>{
                         if(response.status === 200){
                             console.log(response.data);
-                            response.data.data.forEach((element) => {
-                                const title = {
-                                  id: element.id,
-                                  RoleName: element.role_name,
-                                  Description: element.Description,
-                                };
-                                RolesTitles.push(title);
-                              });
-                              setRolelist(RolesTitles)
+                           
+                              setRolelist(response.data.data)
                             
                         }
                         
@@ -171,146 +167,194 @@ export default function Roles() {
                   console.log(error.message)
                   console.log(error.errors)
               })
-        }
+      
       
     }
-    const onSubmitEditRole= (e) =>{
-        if(EditTitle === ''){
-            setRoleerr(true)
-        }
-         if(EditDescription === ''){
-            setdescerr(true)
-        }
-        else{
-            setloading2(true)
-            setRoleerr(false)
-            setdescerr(false)
-            AuthorizePatchRequest(`api/roles/${Editid}`, {
-                role_name: EditTitle,
-                description: EditDescription ,
-              })
-              .then((response) => {
-                if (response.status === 200){
-                    toast.success('Successfully Edited Role ', {
-                        position: "bottom-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                    });
-                    setloading2(false)
-                    setRole('');
-                    setdescription('');
-                    AuthorizeGetRequest('api/roles').then((response)=>{
-                        if(response.status === 200){
-                            console.log(response.data);
-                            response.data.data.forEach((element) => {
-                                const title = {
-                                  id: element.id,
-                                  RoleName: element.role_name,
-                                  Description: element.Description,
-                                };
-                                RolesTitles.push(title);
-                              });
-                              setRolelist(RolesTitles)
+    // const onSubmitEditRole= (e) =>{
+    //     if(EditTitle === ''){
+    //         setRoleerr(true)
+    //     }
+    //      if(EditDescription === ''){
+    //         setdescerr(true)
+    //     }
+    //     else{
+    //         setloading2(true)
+    //         setRoleerr(false)
+    //         setdescerr(false)
+    //         AuthorizePatchRequest(`api/roles/${Editid}`, {
+    //             role_name: EditTitle,
+    //             description: EditDescription ,
+    //           })
+    //           .then((response) => {
+    //             if (response.status === 200){
+    //                 toast.success('Successfully Edited Role ', {
+    //                     position: "bottom-right",
+    //                     autoClose: 5000,
+    //                     hideProgressBar: false,
+    //                     closeOnClick: true,
+    //                     pauseOnHover: true,
+    //                     draggable: true,
+    //                     progress: undefined,
+    //                 });
+    //                 setloading2(false)
+    //                 setRole('');
+    //                 setdescription('');
+    //                 AuthorizeGetRequest('api/roles').then((response)=>{
+    //                     if(response.status === 200){
+    //                         console.log(response.data);
+    //                         response.data.data.forEach((element) => {
+    //                             const title = {
+    //                               id: element.id,
+    //                               RoleName: element.role_name,
+    //                               Description: element.Description,
+    //                             };
+    //                             RolesTitles.push(title);
+    //                           });
+    //                           setRolelist(RolesTitles)
                             
-                        }
+    //                     }
                         
-                    });
-                  } else {
-                    toast.error("Oops Contact Admin", {
-                        position: "bottom-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                    });
+    //                 });
+    //               } else {
+    //                 toast.error("Oops Contact Admin", {
+    //                     position: "bottom-right",
+    //                     autoClose: 5000,
+    //                     hideProgressBar: false,
+    //                     closeOnClick: true,
+    //                     pauseOnHover: true,
+    //                     draggable: true,
+    //                     progress: undefined,
+    //                 });
+    //               }
+    //           })
+    //           .catch((error)=>{
+    //               console.log(error)
+    //           })
+    //     }
+    //     e.preventDefault()
+
+    // }
+    // const onEditRole = (id) =>{
+    //     // setEditTitle('')
+    //     // setEditDescription('')
+    //     // setEditid('')
+    //     AuthorizeGetRequest(`api/roles/${id}`).then((response)=>{
+    //         if(response.status === 200){
+    //             console.log(response.data);
+    //               setEditTitle(response.data.data.role_name)
+    //               setEditDescription(response.data.data.Description)
+    //               setEditid(response.data.data.id)
+    //             //   setRoleedit(RolesTitles)
+                
+    //         }
+            
+    //     });
+    // }
+    const onDelete = () =>{
+      if (selectionModel.length === 0){
+        toast.info('Please Select any Role ', {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+      });
+      return;
+      }
+      if (selectionModel.length === 1){
+        AuthorizeDeleteRequest(`api/roles/${selectionModel[0]}`)
+        .then((response) => {
+          if (response.status === 200){
+              toast.success('Successfully Deleted Role', {
+                  position: "bottom-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+              });
+              AuthorizeGetRequest('api/roles').then((response)=>{
+                  if(response.status === 200){
+                      console.log(response.data);
+                      setdelete(false)
+                      setRolelist(response.data.data)
+                      return;
                   }
-              })
-              .catch((error)=>{
-                  console.log(error)
-              })
-        }
-        e.preventDefault()
+                  
+              });
+            } else {
+              toast.error("Oops Contact Admin", {
+                  position: "bottom-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+              });
+              return;
+            }
+        })
+        .catch((error)=>{
+            console.log(error)
+        })
+        return;
+      }
+      const id = selectionModel.join(',');
+        console.log(id);
+        AuthorizeDeleteRequest(`api/Allroles/${id}`)
+        .then((response) => {
+          if (response.status === 200){
+              toast.success('Successfully Deleted Roles', {
+                  position: "bottom-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+              });
+              AuthorizeGetRequest('api/roles').then((response)=>{
+                  if(response.status === 200){
+                      console.log(response.data);
+                      setdelete(false)
+                      setRolelist(response.data.data)
+                      return;
+                  }
+                  
+              });
+            } else {
+              toast.error("Oops Contact Admin", {
+                  position: "bottom-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+              });
+              return;
+            }
+        })
+        
 
     }
-    const onEditRole = (id) =>{
-        // setEditTitle('')
-        // setEditDescription('')
-        // setEditid('')
-        AuthorizeGetRequest(`api/roles/${id}`).then((response)=>{
-            if(response.status === 200){
-                console.log(response.data);
-                  setEditTitle(response.data.data.role_name)
-                  setEditDescription(response.data.data.Description)
-                  setEditid(response.data.data.id)
-                //   setRoleedit(RolesTitles)
-                
-            }
-            
-        });
-    }
-    const handleSelectionChange = (selection) => {
-      setSelectedRows(selection.rows);
-      console.log(selection.rows);
-    };
   
-    const handlePurge = () => {
-      setDeletedRows([
-        ...deletedRows,
-        ...Rolelist.filter(
-          (r) => selectedRows.filter((sr) => sr.id === r.id).length < 1
-        )
-      ]);
-      // setRows(selectedRows);
-      // setPurgeMode(false);
-    };
     const columns = [
+      { field: 'id', headerName: 'Role Id', width: 170,editable: true },
       { field: 'role_name', headerName: 'Role Name', width: 170,editable: true },
+     
       { field: 'description', headerName: 'Role Description', width: 400,editable: true },
     ];
-    function MultipleActions() {
-      return (
-        <MaterialTable
-          title="Multiple Actions Preview"
-          columns={[
-            { title: 'Name', field: 'name' },
-            { title: 'Surname', field: 'surname' },
-            { title: 'Birth Year', field: 'birthYear', type: 'numeric' },
-            {
-              title: 'Birth Place',
-              field: 'birthCity',
-              lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
-            },
-          ]}
-          data={[
-            { name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63 },
-            { name: 'Zerya Betül', surname: 'Baran', birthYear: 2017, birthCity: 34 },
-          ]}        
-          actions={[
-            {
-              icon: 'save',
-              tooltip: 'Save User',
-              onClick: (event, rowData) => alert("You saved " + rowData.name)
-            },
-            {
-              icon: 'delete',
-              tooltip: 'Delete User',
-              onClick: (event, rowData) => alert("You want to delete " + rowData.name)
-            }
-          ]}
-        />
-      )
-    }
+   
     useEffect(() => {
         AuthorizeGetRequest('api/roles').then((response)=>{
             if(response.status === 200){
-                console.log(response.data.data);
-
+                console.log(response.data);
+                setRolelist(response.data.data)
                 // response.data.data.forEach((element) => {
                 //     const title = {
                 //       id: element.id,
@@ -319,8 +363,6 @@ export default function Roles() {
                 //     };
                 //     RolesTitles.push(title);
                 //   });
-                  
-                  setRolelist(response.data.data)
                 
             }
             
@@ -379,14 +421,29 @@ export default function Roles() {
       </CardContent>
       <CardActions />
     </Card>
+    <div style={{marginTop:'30px'}}>
+      {deleteBtn && (<>
+        <Button variant="outlined" onClick={onDelete} startIcon={<DeleteIcon />}>
+        Delete
+      </Button>
+      </>)}
+    </div>
+    
     <div style={{ height: 400, width: '100%',marginTop:'30px' }}>
       <DataGrid
         rows={Rolelist}
         columns={columns}
+        sortModel={sortModel}
+        onSortModelChange={(model) => setSortModel(model)}
         onCellEditCommit={handleCellEditCommit}
         checkboxSelection
-        onSelectionModelChange={handleSelectionChange}
-        editMode="row"
+        onSelectionModelChange={(newSelectionModel) => {
+          setSelectionModel(newSelectionModel);
+          setdelete(true)
+            console.log(newSelectionModel);
+        }}
+        selectionModel={selectionModel}
+        
       />
     </div>
         </div>
