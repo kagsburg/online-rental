@@ -15,9 +15,9 @@ const PrivateRoutes =({...path})=>{
             }
             setLoading(false)
         });
-        return ()=>{
-            setAuthenicated(false)
-        }
+        // return ()=>{
+        //     setAuthenicated(false)
+        // }
     }, []);
     if(loading){
         return (

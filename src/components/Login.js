@@ -49,6 +49,7 @@ export default function Login() {
     AuthorizeLoginRequest('api/signin', formData).then((response) => {
       console.log('login', response.data);
       if (response.status == 201) {
+        console.log('login', response.data);
         toast.success('Successfully Logged in', {
           position: 'bottom-right',
           autoClose: 5000,
@@ -61,7 +62,8 @@ export default function Login() {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('username', response.data.user.Full_name);
         history.replace('/dashboard');
-      } else if (response.status == 401) {
+      }
+      else if (response.data.statusCode === 401){
         toast.error('Please Provide Correct Email or PassCode', {
           position: 'bottom-right',
           autoClose: 5000,
@@ -71,7 +73,12 @@ export default function Login() {
           draggable: true,
           progress: undefined,
         });
+
       }
+    })
+    .catch((error)=>{
+      console.log(error.data)
+        
     });
     setLoading(false);
     e.preventDefault();
@@ -99,6 +106,7 @@ export default function Login() {
               label="Email"
               name="email"
               value={email}
+              
               onChange={onChange}
               placeholder="Enter username"
               fullWidth

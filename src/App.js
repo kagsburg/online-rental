@@ -8,18 +8,28 @@ import {
 } from "react-router-dom";
 
 import Login from "./components/Login";
-import Register from "./components/Register";
+
+
 import PrivateRoutes from "./components/Privateroutes";
 import CompLayout from "./components/CompLayout";
 import Comp from "./components/top";
+import SignInSide from "./pages/Login";
 
 function App() {
   return (
     <Router>
-      <Route exact path="/">
-        <Login />
+      {/* <Route exact path="/signup">
+        <Register />
+      </Route> */}
+      <Route exact path="/signin">
+        <SignInSide/>
       </Route>
+      <Route exact path="/">
+      <SignInSide/>
+      </Route>
+      
       <PrivateRoutes path="/Add_Roles" />
+      <PrivateRoutes path="/Users" />
       <PrivateRoutes path="/property_type" />
       {/* <Route exact path="/" component={CompLayout}></Route> */}
       <Route exact path="/comp" component={Comp}></Route>

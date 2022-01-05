@@ -46,9 +46,9 @@ const nav = [
     {
       id: '4',
       dropdown: false,
-      title: 'Blog',
+      title: 'User',
       titleIcon:<TextFieldsIcon/>,
-      to: '/blog',
+      to: '/Users',
     },
     
   ];

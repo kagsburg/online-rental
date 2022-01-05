@@ -39,19 +39,11 @@ export default function Roles() {
   const [selectionModel, setSelectionModel] = useState([]);
     const [Role, setRole] = useState('');
     const [Rolelist, setRolelist] = useState([])
-    const [Roleedit, setRoleedit] = useState([])
-    const [EditTitle, setEditTitle] = useState('')
     const [deleteBtn, setdelete] = useState(false)
-    const [EditDescription, setEditDescription] = useState('')
-    const [Editid, setEditid] = useState('')
     const [Roleerr, setRoleerr] = useState(false)
     const [descerr, setdescerr] = useState(false)
     const [description, setdescription] = useState('')
     const [loading, setloading] = useState(false)
-    const [loading2, setloading2] = useState(false)
-    const [selectedRows, setSelectedRows] = useState([]);
-  const [deletedRows, setDeletedRows] = useState([]);
-    const  RolesTitles = [];
 
     const handleCellEditCommit = React.useCallback(
       async (params) => {
@@ -390,8 +382,8 @@ export default function Roles() {
         autoComplete="off"
       >
           
-          <TextField id="standard-basic" helperText={Roleerr?'This field is required.':''} error={Roleerr? '1':''} label="Role Name" value={Role} onChange={onChangeRole}  variant="standard" />
-        <TextField id="standard-basic" helperText={descerr?'This field is required.':''} error={descerr? '1':''} label="Role Description" value={description} onChange={onChangeDescrpition} variant="standard" />
+          <TextField id="standard-basic" helperText={Roleerr ? 'This field is required.':''} error={Roleerr ? true : false} label="Role Name" value={Role} onChange={onChangeRole}  variant="standard" />
+        <TextField id="standard-basic" helperText={descerr ?  'This field is required.':''} error={descerr ? true: false} label="Role Description" value={description} onChange={onChangeDescrpition} variant="standard" />
         {loading ? (
             <LoadingButton
   loading
