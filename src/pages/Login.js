@@ -36,7 +36,7 @@ const theme = createTheme();
 
 export default function SignInSide() {
     const [formData, setFormData] = useState({
-        email: '',
+        Email: '',
         password: '',
       });
       const [formSignup, setFormSignup] = useState({
@@ -56,7 +56,7 @@ export default function SignInSide() {
       const [Signupform, setSignupForm] = useState(false);
       const [Passworderr, setPassworderr] = useState(false)
       const [loading, setLoading] = useState(false);
-      const { email, password } = formData;
+      const { Email, password } = formData;
       //const { Full_name,email1,NIN, password1 } = formSignup
       let history = useHistory();
       useEffect(() => {
@@ -360,9 +360,9 @@ export default function SignInSide() {
                 fullWidth
                 id="email"
                 label="Email Address"
-                name="email"
+                name="Email"
                 helperText={Emailerr?'This field is required.':''} error={Emailerr ? true : false}
-                value={email}
+                value={Email}
                 onChange={onChange}
                 autoComplete="email"
                 autoFocus
