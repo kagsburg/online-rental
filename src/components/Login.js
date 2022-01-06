@@ -27,7 +27,7 @@ export default function Login() {
     },
   }));
   const [formData, setFormData] = useState({
-    email: '',
+    Email: '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
@@ -104,8 +104,8 @@ export default function Login() {
             <TextField
               id="filled-basic"
               label="Email"
-              name="email"
-              value={email}
+              name="Email"
+              value={Email}
               
               onChange={onChange}
               placeholder="Enter username"
