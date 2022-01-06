@@ -31,7 +31,7 @@ export default function Login() {
     password: '',
   });
   const [loading, setLoading] = useState(false);
-  const { email, password } = formData;
+  const { Email, password } = formData;
   // eslint-disable-next-line prefer-const
   let history = useHistory();
   useEffect(() => {
