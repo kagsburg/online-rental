@@ -30,7 +30,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import Typography from '@mui/material/Typography';
 import { ClassNames } from '@emotion/react';
 import { toast } from 'react-toastify';
-
+import logo2 from '../assets/imgs/logo.png';
+import logo1 from '../assets/imgs/low-res-logo.png';
 import { Avatar } from '@mui/material';
 import nav from "../util";
 import AuthorizeLogoutRequest from '../api/authorizeLogoutRequest';
@@ -40,6 +41,10 @@ const LeftbarStyle = makeStyles(_theme => ({
     appBar: {
         color: 'white',
         backgroundColor: '#F44336'
+    },
+    topbarLogo:{
+        height:'50px',
+        width:'198px'
     }
 }))
 
@@ -222,7 +227,7 @@ function ResponsiveDrawer(props) {
                         <MenuIcon />
                     </IconButton>
                     <div>
-                        <Avatar variant='circle' src={``} alt='App Logo'/>
+                        <Avatar variant='circle' src={logo2} alt='App Logo'/>
                     </div>
                     <Typography
                         variant="h6"
@@ -230,7 +235,7 @@ function ResponsiveDrawer(props) {
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
-                        MUI
+                       {/* <Avatar variant='square' src={logo1} alt='App Logo'  className={cl.topbarLogo}/> */}
                     </Typography>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>

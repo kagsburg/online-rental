@@ -129,6 +129,7 @@ export default function SignInSide() {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('username', response.data.user.Full_name);
         history.replace('/dashboard');
+        setLoading(false);
       }
       else if (response.data.statusCode === 401){
         toast.error('Please Provide Correct Email or PassCode', {
@@ -147,7 +148,7 @@ export default function SignInSide() {
       console.log(error)
         
     });
-    setLoading(false);
+   
   };
   const handleSignup = (event) => {
     event.preventDefault();
@@ -169,9 +170,6 @@ export default function SignInSide() {
       setpasserr(true);
       return;
     }
-     
-    console.log(formSignup)
-    
     setLoading(true);
     AuthorizeLoginRequest('api/user', formSignup).then((response) => {
       console.log('login', response.data);
@@ -186,6 +184,7 @@ export default function SignInSide() {
           draggable: true,
           progress: undefined,
         });
+        setLoading(false);
       }
       else if (response.data.statusCode === 401){
         toast.error('Please Provide Correct Email or PassCode', {
@@ -204,7 +203,7 @@ export default function SignInSide() {
       console.log(error)
         
     });
-    setLoading(false);
+    
   };
   return (
     <ThemeProvider theme={theme}>

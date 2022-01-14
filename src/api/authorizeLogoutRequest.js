@@ -9,7 +9,7 @@ const AuthorizeLogoutRequest = async (url) => {
               'Content-Type': 'application/json',
             },
           });
-          const baseURL = `https://rental2api2.herokuapp.com/${url}`;
+          const baseURL = `http://127.0.0.1:8000/${url}`;
           return a
             .post(baseURL)
             .then((response) => {

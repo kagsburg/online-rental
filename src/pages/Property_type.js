@@ -37,7 +37,7 @@ export default function PropertyTypes() {
           sort: 'desc',
         },
       ]);
-      const [selectionModel, setSelectionModel] = useState([]);
+    const [selectionModel, setSelectionModel] = useState([]);
     const [categoryerr, setcategoryerr] = useState(false)
     const [descerr, setdescerr] = useState(false)
     const [AllCategories, setAllCategories] = useState([])

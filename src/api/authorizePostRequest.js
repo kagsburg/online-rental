@@ -9,7 +9,7 @@ const AuthorizePostRequest = async (url, formData) => {
           'Content-Type': 'application/json',
         },
       });
-      const baseURL = `https://rental2api2.herokuapp.com/${url}`;
+      const baseURL = `http://127.0.0.1:8000/${url}`;
       return a
         .post(baseURL, JSON.stringify(formData))
         .then((response) => {
