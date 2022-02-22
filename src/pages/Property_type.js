@@ -282,7 +282,7 @@ export default function PropertyTypes() {
                     <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                         Add New Property Types
                     </Typography>
-                    <form>
+                    
                         <Typography variant="h5" component="div">
                             <Box
                                 component="form"
@@ -292,8 +292,8 @@ export default function PropertyTypes() {
                                 noValidate
                                 autoComplete="off"
                             >
-                                <TextField id="standard-basic" helperText={categoryerr ? 'This field is required.' : ''} error={categoryerr ? '1' : ''} label="Category Name" value={category} onChange={onChangeCategory} variant="standard" />
-                                <TextField id="standard-basic" helperText={descerr ? 'This field is required.' : ''} error={descerr ? '1' : ''} label="Category Description" value={description} onChange={onChangeDescrpition} variant="standard" />
+                                <TextField id="standard-basic" helperText={categoryerr ? 'This field is required.' : ''} error={categoryerr ? true : false} label="Category Name" value={category} onChange={onChangeCategory} variant="standard" />
+                                <TextField id="standard-basic" helperText={descerr ? 'This field is required.' : ''} error={descerr ? true : false} label="Category Description" value={description} onChange={onChangeDescrpition} variant="standard" />
                                 {loading ? (
                                     <LoadingButton
                                         loading
@@ -310,7 +310,7 @@ export default function PropertyTypes() {
                                 </Button></>)}
                             </Box>
                         </Typography>
-                    </form>
+                    
                     <Typography sx={{ mb: 1.5 }} color="text.secondary" />
                     <Typography variant="body2">
                         <br />

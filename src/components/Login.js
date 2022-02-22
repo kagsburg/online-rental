@@ -4,7 +4,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { styled } from '@mui/material/styles';
-import { useHistory } from 'react-router';
+import { useNavigate  } from 'react-router-dom';
 
 import { toast } from 'react-toastify';
 import { purple } from '@mui/material/colors';
@@ -33,11 +33,11 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const { Email, password } = formData;
   // eslint-disable-next-line prefer-const
-  let history = useHistory();
+  let history = useNavigate();
   useEffect(() => {
     AuthorizeGetRequest('api/ValidateToken').then((response) => {
-      if (response.status == 200) {
-        history.push('/Add_roles');
+      if (response.status === 200) {
+        history('/dashboard');
       }
     });
   }, []);
@@ -61,7 +61,7 @@ export default function Login() {
         });
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('username', response.data.user.Full_name);
-        history.replace('/dashboard');
+        history('/dashboard',{ replace: true });
       }
       else if (response.data.statusCode === 401){
         toast.error('Please Provide Correct Email or PassCode', {

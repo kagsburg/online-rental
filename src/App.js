@@ -3,36 +3,48 @@ import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 import {
-  BrowserRouter as Router,
   Route,
+  Routes,
 } from "react-router-dom";
 
 import Login from "./components/Login";
-
+import Roles from './pages/Roles';
+import Propertytypes from './pages/Property_type'
+import Users from './pages/Users'
 
 import PrivateRoutes from "./components/Privateroutes";
 import CompLayout from "./components/CompLayout";
 import Comp from "./components/top";
 import SignInSide from "./pages/Login";
+import LayoutComp from "./components/LayoutComp";
 
 function App() {
   return (
-    <Router>
-      {/* <Route exact path="/signup">
-        <Register />
-      </Route> */}
-      <Route exact path="/signin">
-        <SignInSide/>
+    <>
+    
+    
+      <Routes>
+      <Route exact path="/signin" element={<SignInSide/>}/>
+      <Route exact path="/" element={<SignInSide/>}/>
+      <Route  element={<PrivateRoutes />}>
+        <Route element={<LayoutComp/>}>
+
+      <Route path="dashboard/Add_Roles" element={<Roles/>} />
+      <Route path="dashboard/property_type" element={<Propertytypes/>} />
+      <Route path="dashboard/Users" element={<Users/>} />
+        </Route>
       </Route>
-      <Route exact path="/">
-      <SignInSide/>
-      </Route>
+
       
-      <PrivateRoutes path="/Add_Roles" />
+      
+      
+      {/* <PrivateRoutes path="/Add_Roles" />
       <PrivateRoutes path="/Users" />
-      <PrivateRoutes path="/property_type" />
+      <PrivateRoutes path="/property_type" /> */}
       {/* <Route exact path="/" component={CompLayout}></Route> */}
-      <Route exact path="/comp" component={Comp}></Route>
+      <Route exact path="/comp" element={<Comp/>}></Route>
+      </Routes>
+    
       {/* <Route exact path="/dashboard" component={Layout}></Route> */}
       {/* <Route  path="/login" >
         <Login/>
@@ -74,7 +86,7 @@ function App() {
         draggable
         pauseOnHover
       />
-    </Router>
+    </>
   );
 }
 

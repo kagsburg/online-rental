@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { makeStyles } from "@mui/styles";
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
@@ -51,7 +51,7 @@ const LeftbarStyle = makeStyles(_theme => ({
 const SideMenu = (
     { id, dropdown, title, to, titleIcon, dropdownItems }) => {
     
-    const history = useHistory()
+    const history = useNavigate()
     const [open, setOpen] = React.useState(true);
     const handleClick = () => {
         setOpen(!open);
@@ -70,7 +70,7 @@ const SideMenu = (
                         <List component="div" disablePadding>
                             {dropdownItems.map((task1) => {
                                 return (
-                                    <ListItemButton key={task1.id} onClick={() => history.push(task1.to)} sx={{ pl: 4 }}>
+                                    <ListItemButton key={task1.id} onClick={() => history(task1.to)} sx={{ pl: 4 }}>
                                             <ListItemIcon>
                                                 {task1.titleIcon}
                                             </ListItemIcon>
@@ -86,7 +86,7 @@ const SideMenu = (
     
         return (
             <List>
-                    <ListItemButton onClick={() => history.push(to)}>
+                    <ListItemButton onClick={() => history(to)}>
                         <ListItemIcon>
                             {titleIcon}
                         </ListItemIcon>
@@ -150,7 +150,7 @@ function ResponsiveDrawer(props) {
         setAnchorEl(null);
         handleMobileMenuClose();
       };
-      const history = useHistory();
+      const history = useNavigate();
       const onSubmitLogout = (e) => {
        
         e.preventDefault();
@@ -169,7 +169,7 @@ function ResponsiveDrawer(props) {
             handleMenuClose()
             localStorage.removeItem('token');
             localStorage.removeItem('username');
-            history.push('/')
+            history('/')
           } else {
             toast.error("Ooops Contact Admin", {
               position: "bottom-right",

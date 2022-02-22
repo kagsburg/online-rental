@@ -34,21 +34,21 @@ const nav = [
       dropdown: false,
       title: 'User Roles',
       titleIcon:<GroupIcon />,
-      to: '/Add_Roles'
+      to: '/dashboard/Add_Roles'
     },
     {
       id: '3',
       dropdown: false,
       title: 'Property Types', 
       titleIcon:<MapsHomeWorkIcon />,
-      to: '/property_type',
+      to: '/dashboard/property_type',
     },
     {
       id: '4',
       dropdown: false,
       title: 'User',
       titleIcon:<TextFieldsIcon/>,
-      to: '/Users',
+      to: '/dashboard/Users',
     },
     
   ];

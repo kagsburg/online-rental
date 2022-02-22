@@ -13,12 +13,13 @@ import Container from '@mui/material/Container';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useHistory } from 'react-router';
+import { useNavigate  } from 'react-router-dom';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { toast } from 'react-toastify';
 import { purple } from '@mui/material/colors';
 import AuthorizeGetRequest from '../api/authorizeGetRequest';
 import AuthorizeLoginRequest from '../api/authorizeLoginRequest';
+import useAuth from '../hooks/useAuth';
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -58,17 +59,18 @@ export default function SignInSide() {
       const [loading, setLoading] = useState(false);
       const { Email, password } = formData;
       //const { Full_name,email1,NIN, password1 } = formSignup
-      let history = useHistory();
+      let history = useNavigate();
       useEffect(() => {
         AuthorizeGetRequest('api/ValidateToken').then((response) => {
-          if (response.status == 200) {
-            history.push('/Add_roles');
+          if (response.status === 200) {
+            history('/dashboard/Add_Roles');
           }
         });
       }, []);
       const onChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
       };
+      const { setAuth } = useAuth();
       const onChangeFirstName = (e) =>{
           setFirstName(e.target.value);
           setFirsterr(false)
@@ -96,12 +98,6 @@ export default function SignInSide() {
       }
   const handleSubmit = (event) => {
     event.preventDefault();
-    // const data = new FormData(event.currentTarget);
-    // // eslint-disable-next-line no-console
-    // console.log({
-    //   email: data.get('email'),
-    //   password: data.get('password'),
-    // });
     setEmailerr(false)
     if( formData.email === ''){
         setEmailerr(true)
@@ -115,7 +111,7 @@ export default function SignInSide() {
     setPassworderr(false);
     AuthorizeLoginRequest('api/signin', formData).then((response) => {
       console.log('login', response.data);
-      if (response.status == 201) {
+      if (response.status === 201) {
         console.log('login', response.data);
         toast.success('Successfully Logged in', {
           position: 'bottom-right',
@@ -126,9 +122,16 @@ export default function SignInSide() {
           draggable: true,
           progress: undefined,
         });
+        const accessToken = response.data.token;
+        const roles = response.data.user.roles[0].role_name;
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('username', response.data.user.Full_name);
-        history.replace('/dashboard');
+        console.log(roles);
+        if (roles === 'Tenant'){
+
+          history('/dashboard/Add_Roles',{ replace: true });
+        }
+        setAuth({roles, accessToken });
         setLoading(false);
       }
       else if (response.data.statusCode === 401){
@@ -247,7 +250,7 @@ export default function SignInSide() {
                   autoComplete="given-name"
                   name="firstName"
                   required
-                  error={Firsterr}
+                  error={Firsterr ? true : false}
                   helperText={Firsterr ?  'This field is required.':''}
                   fullWidth
                   onChange={onChangeFirstName}
@@ -260,7 +263,7 @@ export default function SignInSide() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   required
-                  error={Lasterr}
+                  error={Lasterr ? true: false}
                   helperText={Lasterr ?  'This field is required.':''}
                   fullWidth
                   id="lastName"
@@ -275,7 +278,7 @@ export default function SignInSide() {
                 <TextField
                   required
                   fullWidth
-                  error={NINerr}
+                  error={NINerr ? true : false}
                   helperText={NINerr ?  'This field is required.':''}
                   onChange={onChangeSignup}
                   id="NIN"
@@ -286,7 +289,7 @@ export default function SignInSide() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  error={Emailerr}
+                  error={Emailerr ? true : false}
                   helperText={Emailerr ?  'This field is required.':''}
                   required
                   fullWidth
@@ -360,7 +363,8 @@ export default function SignInSide() {
                 id="email"
                 label="Email Address"
                 name="Email"
-                helperText={Emailerr?'This field is required.':''} error={Emailerr ? true : false}
+                helperText={Emailerr?'This field is required.':''} 
+                error={Emailerr ? true : false}
                 value={Email}
                 onChange={onChange}
                 autoComplete="email"
@@ -373,7 +377,8 @@ export default function SignInSide() {
                 name="password"
                 label="Password"
                 value={password}
-                helperText={Passworderr?'This field is required.':''} error={Passworderr? '1':''}
+                helperText={Passworderr?'This field is required.':''} 
+                error={Passworderr ? true : false}
                 onChange={onChange}
                 type="password"
                 id="password"
@@ -386,7 +391,7 @@ export default function SignInSide() {
               {loading ? (<>
                               <LoadingButton
                                   loading
-                                  loadingPosition="start"
+                                 
                                   variant="outlined"
                               >
                                    Sign In

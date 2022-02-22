@@ -1,8 +1,13 @@
 import { useState,useEffect } from "react";
-import { Redirect, Route } from "react-router";
+import {  Navigate ,Outlet} from "react-router";
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box';
-import Layout from "./layout";
+
+import {
+    Route,
+    Routes,
+  } from "react-router-dom";
+import LayoutComp from "./LayoutComp";
 import AuthorizeGetRequest from "../api/authorizeGetRequest";
 
 const PrivateRoutes =({...path})=>{
@@ -15,10 +20,8 @@ const PrivateRoutes =({...path})=>{
             }
             setLoading(false)
         });
-        // return ()=>{
-        //     setAuthenicated(false)
-        // }
-    }, []);
+        
+    }, [Authenicated]);
     if(loading){
         return (
             <Box sx={{ display: 'flex' }}>
@@ -27,15 +30,17 @@ const PrivateRoutes =({...path})=>{
         )
     }
     return(
-        <Route  {...path}
-         render={ ({location}) =>
-            Authenicated ? 
-            (<Layout/>):(<Redirect to={{pathname:"/login", state:{from: location}}}/>)
-
-
-         }
-        
-        />
+      
+            <>
+            { Authenicated ? 
+                <Outlet/>:<Navigate to={{pathname:"/"}}/>}
+            
+               
+            </>
+           
+                
+            
+       
     )
 }
 
