@@ -17,6 +17,8 @@ import CompLayout from "./components/CompLayout";
 import Comp from "./components/top";
 import SignInSide from "./pages/Login";
 import LayoutComp from "./components/LayoutComp";
+import PropertyStatus from "./pages/PropertyStatus";
+import Property from "./pages/Property";
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
 
       <Route path="dashboard/Add_Roles" element={<Roles/>} />
       <Route path="dashboard/property_type" element={<Propertytypes/>} />
+      <Route path="dashboard/property_status" element={<PropertyStatus/>} />
+      <Route path="dashboard/property" element={<Property/>} />
       <Route path="dashboard/Users" element={<Users/>} />
         </Route>
       </Route>

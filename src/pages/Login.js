@@ -135,6 +135,7 @@ export default function SignInSide() {
         setLoading(false);
       }
       else if (response.data.statusCode === 401){
+        setLoading(false);
         toast.error('Please Provide Correct Email or PassCode', {
           position: 'bottom-right',
           autoClose: 5000,

@@ -9,7 +9,6 @@ import TextField from '@mui/material/TextField';
 import Card from '@mui/material/Card';
 import { DataGrid } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
@@ -27,7 +26,7 @@ const useFakeMutation = () => {
         [],
     );
 };
-export default function PropertyTypes() {
+const PropertyStatus = () => {
     const [sortModel, setSortModel] = useState([
         {
             field: 'id',
@@ -35,25 +34,27 @@ export default function PropertyTypes() {
         },
     ]);
     const [selectionModel, setSelectionModel] = useState([]);
-    const [categoryerr, setcategoryerr] = useState(false)
+    const [statuserr, setstatuserr] = useState(false)
     const [descerr, setdescerr] = useState(false)
-    const [AllCategories, setAllCategories] = useState([])
+    const [AllStatus, setAllStatus] = useState([])
     const [deleteBtn, setdelete] = useState(false)
 
     const [description, setdescription] = useState('')
-    const [category, setCategory] = useState('')
+    const [status, setStatus] = useState('')
     const [loading, setloading] = useState(false)
     const [loading2, setloading2] = useState(true)
-    const onChangeCategory = (e) => {
-        setCategory(e.target.value);
+    const onChangeStatus = (e) => {
+        setStatus(e.target.value);
+        setstatuserr(false)
     }
     const onChangeDescrpition = (e) => {
         setdescription(e.target.value);
+        setdescerr(false)
     }
-    const onSubmitCategory = () => {
+    const onSubmitPropertyStatus = () => {
 
-        if (category === '') {
-            setcategoryerr(true)
+        if (status === '') {
+            setstatuserr(true)
             return;
         }
         if (description === '') {
@@ -62,10 +63,10 @@ export default function PropertyTypes() {
         }
 
         setloading(true)
-        setcategoryerr(false)
+        setstatuserr(false)
         setdescerr(false)
-        AuthorizePostRequest('api/types', {
-            category_name: category,
+        AuthorizePostRequest('api/status', {
+            status_name: status,
             description,
         })
             .then((response) => {
@@ -80,13 +81,13 @@ export default function PropertyTypes() {
                         progress: undefined,
                     });
                     setloading(false)
-                    setCategory('');
+                    setStatus('');
                     setdescription('');
-                    AuthorizeGetRequest('api/types').then((response) => {
+                    AuthorizeGetRequest('api/status').then((response) => {
                         if (response.status === 200) {
                             console.log(response.data);
 
-                            setAllCategories(response.data.data)
+                            setAllStatus(response.data.data)
 
                         }
 
@@ -110,17 +111,18 @@ export default function PropertyTypes() {
 
 
     }
+    
     const mutateRow = useFakeMutation();
     const handleCellEditCommit = React.useCallback(
         async (params) => {
             try {
                 // Make the HTTP request to save in the backend
-                AuthorizePatchRequest(`api/types/${params.id}`, {
+                AuthorizePatchRequest(`api/status/${params.id}`, {
                     [params.field]: params.value
                 })
                     .then((response) => {
                         if (response.status === 200) {
-                            toast.success('Successfully Edited Property Type ', {
+                            toast.success('Successfully Edited Property Status ', {
                                 position: "bottom-right",
                                 autoClose: 5000,
                                 hideProgressBar: false,
@@ -139,14 +141,14 @@ export default function PropertyTypes() {
                                 draggable: true,
                                 progress: undefined,
                             });
-                            setAllCategories((prev) => [...prev]);
+                            setAllStatus((prev) => [...prev]);
                         }
                     })
                 const newRole = await mutateRow({
                     id: params.id,
                     [params.field]: params.value,
                 });
-                setAllCategories((prev) =>
+                setAllStatus((prev) =>
                     prev.map((row) => (row.id === params.id ? { ...row, ...newRole } : row)),
                 );
 
@@ -172,10 +174,10 @@ export default function PropertyTypes() {
             return;
         }
         if (selectionModel.length === 1) {
-            AuthorizeDeleteRequest(`api/types/${selectionModel[0]}`)
+            AuthorizeDeleteRequest(`api/status/${selectionModel[0]}`)
                 .then((response) => {
                     if (response.status === 200) {
-                        toast.success('Successfully Deleted Property Types', {
+                        toast.success('Successfully Deleted Property Status', {
                             position: "bottom-right",
                             autoClose: 5000,
                             hideProgressBar: false,
@@ -184,11 +186,11 @@ export default function PropertyTypes() {
                             draggable: true,
                             progress: undefined,
                         });
-                        AuthorizeGetRequest('api/types').then((response) => {
+                        AuthorizeGetRequest('api/status').then((response) => {
                             if (response.status === 200) {
                                 console.log(response.data);
                                 setdelete(false)
-                                setAllCategories(response.data.data)
+                                setAllStatus(response.data.data)
                                 return;
                             }
 
@@ -216,7 +218,7 @@ export default function PropertyTypes() {
         AuthorizeDeleteRequest(`api/Alltypes/${id}`)
             .then((response) => {
                 if (response.status === 200) {
-                    toast.success('Successfully Deleted Property Types', {
+                    toast.success('Successfully Deleted Property Status', {
                         position: "bottom-right",
                         autoClose: 5000,
                         hideProgressBar: false,
@@ -225,11 +227,11 @@ export default function PropertyTypes() {
                         draggable: true,
                         progress: undefined,
                     });
-                    AuthorizeGetRequest('api/types').then((response) => {
+                    AuthorizeGetRequest('api/status').then((response) => {
                         if (response.status === 200) {
                             console.log(response.data);
                             setdelete(false)
-                            setAllCategories(response.data.data)
+                            setAllStatus(response.data.data)
                             return;
                         }
 
@@ -252,25 +254,16 @@ export default function PropertyTypes() {
     }
     const columns = [
         { field: 'id', headerName: 'Type Id', width: 170, editable: true },
-        { field: 'category_name', headerName: 'Category Name', width: 170, editable: true },
+        { field: 'status_name', headerName: 'Property Status Name', width: 170, editable: true },
 
-        { field: 'description', headerName: 'Category Description', width: 400, editable: true },
+        { field: 'description', headerName: 'Status Description', width: 400, editable: true },
     ];
-    
     useEffect(() => {
-        AuthorizeGetRequest('api/types').then((response) => {
+        AuthorizeGetRequest('api/status').then((response) => {
             if (response.status === 200) {
                 console.log(response.data);
-                setAllCategories(response.data.data)
+                setAllStatus(response.data.data)
                 setloading2(false)
-                // response.data.data.forEach((element) => {
-                //     const title = {
-                //       id: element.id,
-                //       RoleName: element.role_name,
-                //       Description: element.Description,
-                //     };
-                //     RolesTitles.push(title);
-                //   });
             }
 
         });
@@ -286,10 +279,11 @@ export default function PropertyTypes() {
     }
     return (
         <div>
-            <Card lg={{ minWidth: 275 }}>
+            {!loading && (<>
+                <Card lg={{ minWidth: 275 }}>
                 <CardContent>
                     <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                        Add New Property Types
+                        Add New Property Statuses
                     </Typography>
 
                     <Typography variant="h5" component="div">
@@ -301,8 +295,8 @@ export default function PropertyTypes() {
                             noValidate
                             autoComplete="off"
                         >
-                            <TextField id="standard-basic" helperText={categoryerr ? 'This field is required.' : ''} error={categoryerr ? true : false} label="Category Name" value={category} onChange={onChangeCategory} variant="standard" />
-                            <TextField id="standard-basic" helperText={descerr ? 'This field is required.' : ''} error={descerr ? true : false} label="Category Description" value={description} onChange={onChangeDescrpition} variant="standard" />
+                            <TextField id="standard-basic" helperText={statuserr ? 'This field is required.' : ''} error={statuserr ? true : false} label="Property Status Name" value={status} onChange={onChangeStatus} variant="standard" required />
+                            <TextField id="standard-basic2" helperText={descerr ? 'This field is required.' : ''} error={descerr ? true : false} label="Status Description" value={description} onChange={onChangeDescrpition}  variant="standard" />
                             {loading ? (
                                 <LoadingButton
                                     loading
@@ -313,7 +307,7 @@ export default function PropertyTypes() {
                                     Save
                                 </LoadingButton>
                             ) : (<> <Button variant="contained" color="success" onClick={() => {
-                                onSubmitCategory();
+                                onSubmitPropertyStatus();
                             }} endIcon={<SaveIcon />}>
                                 Save
                             </Button></>)}
@@ -325,7 +319,7 @@ export default function PropertyTypes() {
                         <br />
                     </Typography>
                 </CardContent>
-                <CardActions />
+                {/* <CardActions /> */}
             </Card>
             <div style={{ marginTop: '30px' }}>
                 {deleteBtn && (<>
@@ -336,7 +330,7 @@ export default function PropertyTypes() {
             </div>
             <div style={{ height: 400, width: '100%' }}>
                 <DataGrid
-                    rows={AllCategories}
+                    rows={AllStatus}
                     columns={columns}
                     sortModel={sortModel}
                     onSortModelChange={(model) => setSortModel(model)}
@@ -351,6 +345,11 @@ export default function PropertyTypes() {
 
                 />
             </div>
+            </>)}
+            
+
         </div>
     )
 }
+
+export default PropertyStatus

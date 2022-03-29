@@ -59,7 +59,6 @@ function Users() {
   const [deleteBtn, setdelete] = useState(false)
   const [open, setOpen] = React.useState(false);
   const [roles, setRole] = React.useState('');
-  const [description, setdescription] = useState('')
   const [category, setCategory] = useState('')
   const [loading, setloading] = useState(false)
   const onChangeCategory = (e) => {
@@ -76,69 +75,7 @@ function Users() {
     // console.log('params',params.row.role_id[0])
     return `${params.row.role_id[0].role_name || ''} `;
   }
-  const onChangeDescrpition = (e) => {
-    setdescription(e.target.value);
-  }
-  const onSubmitCategory = () => {
-
-    if (category === '') {
-      setcategoryerr(true)
-      return;
-    }
-    if (description === '') {
-      setdescerr(true)
-      return;
-    }
-
-    setloading(true)
-    setcategoryerr(false)
-    setdescerr(false)
-    AuthorizePostRequest('api/types', {
-      category_name: category,
-      description,
-    })
-      .then((response) => {
-        if (response.status === 201) {
-          toast.success('Successfully Added New Property Type', {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-          setloading(false)
-          setCategory('');
-          setdescription('');
-          AuthorizeGetRequest('api/types').then((response) => {
-            if (response.status === 200) {
-              console.log(response.data);
-
-              setAllCategories(response.data.data)
-
-            }
-
-          });
-        } else {
-          toast.error("Oops Contact Admin", {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error.message)
-        console.log(error.errors)
-      })
-
-
-  }
+ 
   const onSubmitRoleUpdate = () => {
 
   }

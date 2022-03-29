@@ -24,7 +24,8 @@ const PrivateRoutes =({...path})=>{
     }, [Authenicated]);
     if(loading){
         return (
-            <Box sx={{ display: 'flex' }}>
+            <Box display="flex" m='auto'marginTop={30}
+            width={500} height={80}>
             <CircularProgress />
           </Box>
         )
@@ -33,9 +34,7 @@ const PrivateRoutes =({...path})=>{
       
             <>
             { Authenicated ? 
-                <Outlet/>:<Navigate to={{pathname:"/"}}/>}
-            
-               
+                <Outlet/>:<Navigate to={{pathname:"/"}}/>}               
             </>
            
                 

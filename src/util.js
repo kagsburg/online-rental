@@ -44,6 +44,20 @@ const nav = [
       to: '/dashboard/property_type',
     },
     {
+      id: '5',
+      dropdown: false,
+      title: 'Property Status', 
+      titleIcon:<MapsHomeWorkIcon />,
+      to: '/dashboard/property_status',
+    },
+    {
+      id: '5',
+      dropdown: false,
+      title: 'Properties', 
+      titleIcon:<MapsHomeWorkIcon />,
+      to: '/dashboard/property',
+    },
+    {
       id: '4',
       dropdown: false,
       title: 'User',
