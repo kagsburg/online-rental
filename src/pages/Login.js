@@ -111,7 +111,7 @@ export default function SignInSide() {
     setPassworderr(false);
     AuthorizeLoginRequest('api/signin', formData).then((response) => {
       console.log('login', response.data);
-      if (response.status === 201) {
+      if (response.status === 200) {
         console.log('login', response.data);
         toast.success('Successfully Logged in', {
           position: 'bottom-right',
@@ -123,7 +123,7 @@ export default function SignInSide() {
           progress: undefined,
         });
         const accessToken = response.data.token;
-        const roles = response.data.user.roles[0].role_name;
+        const roles = response.data.user.role_id;
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('username', response.data.user.Full_name);
         console.log(roles);
@@ -149,7 +149,8 @@ export default function SignInSide() {
       }
     })
     .catch((error)=>{
-      console.log(error)
+      setLoading(false);
+      console.log('errr',error)
         
     });
    
