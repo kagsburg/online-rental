@@ -3,7 +3,7 @@ import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
+import CircularProgress from '@mui/material/CircularProgress'
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -52,34 +52,51 @@ function Users() {
     },
   ]);
   const [selectionModel, setSelectionModel] = useState([]);
-  const [categoryerr, setcategoryerr] = useState(false)
-  const [descerr, setdescerr] = useState(false)
+  const [uId, setuId] = useState()
   const [AllCategories, setAllCategories] = useState([])
   const [AllRoles, setAllRoles] = useState([])
   const [deleteBtn, setdelete] = useState(false)
   const [open, setOpen] = React.useState(false);
   const [roles, setRole] = React.useState('');
-  const [category, setCategory] = useState('')
-  const [loading, setloading] = useState(false)
-  const onChangeCategory = (e) => {
-    setCategory(e.target.value);
-  }
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [loading, setloading] = useState(true)
 
+  //open pop up modal
+  const handleOpen = () => setOpen(true) ;
+  const handleClose = () => setOpen(false);
+  const mutateRow = useFakeMutation();
 
   const handleChangeRole = (event) => {
     setRole(event.target.value);
   };
-  function getRoles(params) {
-    // console.log('params',params.row.role_id[0])
-    return `${params.row.role_id[0].role_name || ''} `;
-  }
+
  
   const onSubmitRoleUpdate = () => {
+    AuthorizePostRequest(`api/user_role/${uId}`,{
+      role_id: roles
+    })
+    .then((res) => {
+      console.log('res', res)
+      if(res.data.status === 'success'){
+        AuthorizeGetRequest('api/user').then((response) => {
+          if (response.data.status === 'success') {
+            setAllCategories(response.data.data)            
+          }    
+        })
+        .catch(err=>{
+          console.log('err',err)
+        });
+      toast.success('Role Updated Successfully')
+      setOpen(false)
+      }
+      
 
+    })
+    .catch(error => {
+      console.log('error', error)
+    })
   }
-  const mutateRow = useFakeMutation();
+
+  //handling the cell editing
   const handleCellEditCommit = React.useCallback(
     async (params) => {
       try {
@@ -127,6 +144,7 @@ function Users() {
     },
     [mutateRow],
   );
+  //handling  single deletion of a row and multiple deletion of rows
   const onDelete = () => {
     if (selectionModel.length === 0) {
       toast.info('Please Select any Role ', {
@@ -224,7 +242,7 @@ function Users() {
     { field: 'Full_name', headerName: 'Full Name', width: 170, editable: true },
     { field: 'Email', headerName: 'Email Address', width: 180, editable: true },
     { field: 'Id Number', headerName: 'NIN', width: 170, editable: true },
-    { field: 'role_id', headerName: 'Role Name', width: 180, editable: true, valueGetter: getRoles, },
+    { field: 'role_id', headerName: 'Role Name', width: 180, editable: false },
     {
       field: 'actions',
       type: 'actions',
@@ -233,18 +251,19 @@ function Users() {
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
-          onClick={`deleteUser(params.id)`}
+          // onClick={`deleteUser(params.id)`}
         />,
         <GridActionsCellItem
           icon={<SecurityIcon />}
           label="Toggle Role"
-          onClick={handleOpen}
+          onClick={()=>{handleOpen()
+             setuId(params.id) }}
           showInMenu
         />,
         <GridActionsCellItem
           icon={<FileCopyIcon />}
           label="Duplicate User"
-          onClick={`duplicateUser(params.id)`}
+          // onClick={`duplicateUser(params.id)`}
           showInMenu
         />,
       ],
@@ -253,23 +272,36 @@ function Users() {
 
   useEffect(() => {
     AuthorizeGetRequest('api/user').then((response) => {
-      if (response.status === 200) {
+      if (response.data.status === 'success') {
         console.log(response.data);
         setAllCategories(response.data.data)
-
+        
       }
 
+    })
+    .catch(err=>{
+      console.log('err',err)
     });
     AuthorizeGetRequest('api/roles').then((response) => {
       if (response.status === 200) {
         console.log(response.data);
         setAllRoles(response.data.data)
-
+        setloading(false)
       }
 
+    }).catch(err=>{
+      console.log('err',err)
     });
 
   }, []);
+  if(loading){
+    return (
+        <Box display="flex" m='auto'marginTop={30}
+        width={500} height={80}>
+        <CircularProgress />
+      </Box>
+    )
+}
   return (
     <div>
       <div style={{ marginTop: '30px' }}>
@@ -305,11 +337,11 @@ function Users() {
             >
               {AllRoles.map((element, i) => {
                 return (
-                  <MenuItem value={element.id}>{element.role_name}</MenuItem>
+                  <MenuItem key={i} value={element.id}>{element.role_name}</MenuItem>
                 )
               })}
             </Select>
-            {/* <Button onClick={`handleOpen`} style={{height:40}}>Save</Button> */}
+           
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
               <Button variant="contained" color="success" onClick={() => {
                 onSubmitRoleUpdate();

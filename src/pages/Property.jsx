@@ -21,7 +21,20 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography';
 import NoRows from '../components/NoRows';
+const useFakeMutation = () => {
+    return React.useCallback(
+      (user) =>
+        new Promise((resolve) =>
+          setTimeout(() => {
+            resolve(user);
+          }, 200),
+        ),
+      [],
+    );
+  };
 const Property = () => {
+    const mutateRow = useFakeMutation();
+    const [Propertylist, setPropertylist] = useState([])
     const [propertyname, setPropertyname] = useState('');
     const [propertynameerr, setPropertyerr] = useState(false);
     const [rentamt, setRentAmt] = useState('');
@@ -87,12 +100,11 @@ const Property = () => {
                     });
                     setloading(false)
                     ClearInputs()
-                    AuthorizeGetRequest('api/property').then((response) => {
+                    AuthorizeGetRequest('api/landlordproperty').then((response) => {
                         if (response.status === 200) {
                             console.log(response.data);
                             setAllProperties(response.data.data)
-                            // setAllStatus(response.data.data)
-
+                           
                         }
 
                     });
@@ -118,12 +130,61 @@ const Property = () => {
         console.log('params',params.row.Type_id[0])
         // return `${params.row.Type_id[0].role_name || ''} `;
       }
+      const handleCellEditCommit = React.useCallback(
+        async (params) => {
+          try {
+            // Make the HTTP request to save in the backend
+            AuthorizePatchRequest(`api/property/${params.id}`, {
+              [params.field]:params.value    })
+            .then((response) => {
+              if (response.status === 200){
+                  toast.success('Successfully Edited  ', {
+                      position: "bottom-right",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                  });
+                  
+                  
+                } else {
+                  toast.error("Oops Contact Admin", {
+                      position: "bottom-right",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                  });
+                  setPropertylist((prev) => [...prev]);
+                }
+            })
+            const newRole = await mutateRow({
+              id: params.id,
+              [params.field]: params.value,
+            });
+            setPropertylist((prev) =>
+              prev.map((row) => (row.id === params.id ? { ...row, ...newRole } : row)),
+            );
+            
+          } catch (error) {
+            // setSnackbar({ children: 'Error while saving user', severity: 'error' });
+            // Restore the row in case of error
+            
+          }
+        },
+        [mutateRow],
+      );
     const columns = [
         { field: 'id', headerName: 'Property Id', width: 170, editable: true },
         { field: 'Property_name', headerName: 'Property Name', width: 170, editable: true },
         { field: 'Rent_amount', headerName: 'Property Rent Amount', width: 170, editable: true },
         { field: 'Location', headerName: 'Property Location', width: 170, editable: true },
-        { field: 'Type_id', headerName: 'Property Type', width: 400, editable: false,valueGetter: getPropertytype },
+        { field: 'Type_id', headerName: 'Property Type', width: 200, editable: false, },
+        { field: 'status', headerName: 'Property Status', width: 200, editable: false, },
     ];
     useEffect(() => {
         AuthorizeGetRequest('api/types').then((response) => {
@@ -133,27 +194,33 @@ const Property = () => {
 
             }
 
-        });
-        AuthorizeGetRequest('api/landlord').then((response) => {
-            if (response.status === 200) {
-                console.log(response.data);
-                setAllLandords(response.data.data)
-
-            }
-
-        });
-        AuthorizeGetRequest('api/property').then((response) => {
+        })
+        .catch(err=>{
+            console.log(err)
+        })
+        ;
+        AuthorizeGetRequest('api/landlordproperty').then((response) => {
             if (response.status === 200) {
                 console.log(response.data);
                 setAllProperties(response.data.data)
+                setloading2(false)
 
             }
 
         });
-
+        
     }, []);
+    if(loading2){
+        return (
+            <Box display="flex" m='auto'marginTop={30}
+            width={500} height={80}>
+            <CircularProgress />
+          </Box>
+        )
+    }
     return (
         <div>
+             <h1>Properties</h1>
             <Card lg={{ minWidth: 275 }}>
                 <CardContent>
                     <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -172,24 +239,7 @@ const Property = () => {
                             <TextField id="standard-basic" helperText={propertynameerr ? 'This field is required.' : ''} error={propertynameerr ? true : false} label="Property Name" value={propertyname} onChange={onChangeProperty} variant="standard" />
                             <TextField id="standard-basic" helperText={rentamterr ? 'This field is required.' : ''} error={rentamterr ? true : false} label="Rent Amount" value={rentamt} onChange={onChangeRentAmt} variant="standard" />
                             <TextField id="standard-basic" helperText={locationerr ? 'This field is required.' : ''} error={locationerr ? true : false} label="Property Location" value={location} onChange={onChangeLocation} variant="standard" />
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-autowidth-label" variant="standard"  >Landlords</InputLabel>
-                                <Select
-                                    variant="standard"
-                                    labelId="demo-simple-select-autowidth-label"
-                                    id="demo-simple-select-autowidth"
-                                    value={lords}
-                                    onChange={handleChangeLord}
-
-                                    label="Landlords"
-                                >
-                                    {Alllandlords.map((element, i) => {
-                                        return (
-                                            <MenuItem key={i} value={element.id}>{element.Full_name}</MenuItem>
-                                        )
-                                    })}
-                                </Select>
-                            </FormControl>
+                            
                             <FormControl fullWidth>
                                 <InputLabel id="demo-simple-select-autowidth-label2" variant="standard"  >Property Type</InputLabel>
                                 <Select
@@ -202,7 +252,7 @@ const Property = () => {
                                 >
                                     {AllTypes.map((element, i) => {
                                         return (
-                                            <MenuItem value={element.id}>{element.category_name}</MenuItem>
+                                            <MenuItem key={i} value={element.id}>{element.category}</MenuItem>
                                         )
                                     })}
                                 </Select>
@@ -248,7 +298,7 @@ const Property = () => {
                   }}
                 // sortModel={sortModel}
                 // onSortModelChange={(model) => setSortModel(model)}
-                // onCellEditCommit={handleCellEditCommit}
+                onCellEditCommit={handleCellEditCommit}
                 // checkboxSelection
                 // onSelectionModelChange={(newSelectionModel) => {
                 //     setSelectionModel(newSelectionModel);

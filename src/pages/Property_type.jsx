@@ -252,7 +252,7 @@ export default function PropertyTypes() {
     }
     const columns = [
         { field: 'id', headerName: 'Type Id', width: 170, editable: true },
-        { field: 'category_name', headerName: 'Category Name', width: 170, editable: true },
+        { field: 'category', headerName: 'Category Name', width: 170, editable: true },
 
         { field: 'description', headerName: 'Category Description', width: 400, editable: true },
     ];
@@ -286,6 +286,7 @@ export default function PropertyTypes() {
     }
     return (
         <div>
+             <h1>Property Types</h1>
             <Card lg={{ minWidth: 275 }}>
                 <CardContent>
                     <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>

@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 import { purple } from '@mui/material/colors';
 import AuthorizeGetRequest from '../api/authorizeGetRequest';
 import AuthorizeLoginRequest from '../api/authorizeLoginRequest';
-import useAuth from '../hooks/useAuth';
+import {useAuth} from '../context/Auth';
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -52,13 +52,12 @@ export default function SignInSide() {
       const [Emailerr, setEmailerr] = useState(false)
       const [NINerr, setNINerr] = useState(false)
       const [passerr, setpasserr] = useState(false)
-      const [confirmerr, setConfirmerr] = useState(false)
       const [Firsterr, setFirsterr] = useState(false)
       const [Signupform, setSignupForm] = useState(false);
       const [Passworderr, setPassworderr] = useState(false)
       const [loading, setLoading] = useState(false);
       const { Email, password } = formData;
-      //const { Full_name,email1,NIN, password1 } = formSignup
+      const  auth = useAuth();
       let history = useNavigate();
       useEffect(() => {
         AuthorizeGetRequest('api/ValidateToken').then((response) => {
@@ -70,7 +69,6 @@ export default function SignInSide() {
       const onChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
       };
-      const { setAuth } = useAuth();
       const onChangeFirstName = (e) =>{
           setFirstName(e.target.value);
           setFirsterr(false)
@@ -111,7 +109,7 @@ export default function SignInSide() {
     setPassworderr(false);
     AuthorizeLoginRequest('api/signin', formData).then((response) => {
       console.log('login', response.data);
-      if (response.status === 200) {
+      if (response.data.status === 'success') {
         console.log('login', response.data);
         toast.success('Successfully Logged in', {
           position: 'bottom-right',
@@ -126,13 +124,21 @@ export default function SignInSide() {
         const roles = response.data.user.role_id;
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('username', response.data.user.Full_name);
+        localStorage.setItem('role', response.data.user.role_id);
         console.log(roles);
+        // setAuth({roles, accessToken });
+        auth.login(response.data.user.role_id);
         if (roles === 'Tenant'){
-
-          history('/dashboard/Add_Roles',{ replace: true });
+          history('/dashboard/tenant',{ replace: true });
         }
-        setAuth({roles, accessToken });
+        if (roles=== 'Landlord'){
+          history('/dashboard/property',{ replace: true });
+        }
+        if (roles === 'Admin'){
+          history('/dashboard/Add_Roles',{ replace: true })
+        }
         setLoading(false);
+
       }
       else if (response.data.statusCode === 401){
         setLoading(false);

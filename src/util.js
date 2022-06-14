@@ -28,13 +28,15 @@ const nav = [
         },
        
       ],
+      role:'Admin',
     },
     {
       id: '1',
       dropdown: false,
       title: 'User Roles',
       titleIcon:<GroupIcon />,
-      to: '/dashboard/Add_Roles'
+      to: '/dashboard/Add_Roles',
+      role:'Admin'
     },
     {
       id: '3',
@@ -42,13 +44,15 @@ const nav = [
       title: 'Property Types', 
       titleIcon:<MapsHomeWorkIcon />,
       to: '/dashboard/property_type',
+      role: 'Landlord'
     },
     {
-      id: '5',
+      id: '7',
       dropdown: false,
       title: 'Property Status', 
       titleIcon:<MapsHomeWorkIcon />,
       to: '/dashboard/property_status',
+      role: 'Landlord'
     },
     {
       id: '5',
@@ -56,6 +60,15 @@ const nav = [
       title: 'Properties', 
       titleIcon:<MapsHomeWorkIcon />,
       to: '/dashboard/property',
+      role: 'Landlord'
+    },
+    {
+      id: '8',
+      dropdown: false,
+      title: 'Property Units', 
+      titleIcon:<MapsHomeWorkIcon />,
+      to: '/dashboard/property_units',
+      role: 'Landlord'
     },
     {
       id: '4',
@@ -63,7 +76,16 @@ const nav = [
       title: 'User',
       titleIcon:<TextFieldsIcon/>,
       to: '/dashboard/Users',
+      role:'Admin' 
     },
+    {
+      id: '6',
+      dropdown: false,
+      title: 'Leases',
+      titleIcon:<TextFieldsIcon/>,
+      to: '/dashboard/Lease',
+      role:'Landlord' 
+    }
     
   ];
   export default nav

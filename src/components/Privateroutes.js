@@ -3,11 +3,6 @@ import {  Navigate ,Outlet} from "react-router";
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box';
 
-import {
-    Route,
-    Routes,
-  } from "react-router-dom";
-import LayoutComp from "./LayoutComp";
 import AuthorizeGetRequest from "../api/authorizeGetRequest";
 
 const PrivateRoutes =({...path})=>{

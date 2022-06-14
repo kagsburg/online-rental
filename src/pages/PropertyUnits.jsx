@@ -4,11 +4,16 @@ import AuthorizeGetRequest from "../api/authorizeGetRequest";
 import AuthorizeDeleteRequest from '../api/authorizedDeleteRequest';
 import AuthorizePatchRequest from '../api/authorizedPatchRequest';
 import SaveIcon from '@mui/icons-material/Save';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Card from '@mui/material/Card';
 import { DataGrid } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
@@ -26,50 +31,63 @@ const useFakeMutation = () => {
         [],
     );
 };
-const PropertyStatus = () => {
+export default function PropertyUnits() {
     const [sortModel, setSortModel] = useState([
         {
             field: 'id',
             sort: 'desc',
         },
     ]);
+    const [FormData, setFormData] = useState({
+        Unit_title:'',  
+        Rent: '',
+        property_id: '',
+        Initial_deposit: '',
+        status:''
+      });
+      
+      const onChange = (e) => {
+        setFormData({...FormData,[e.target.name]: e.target.value})
+        setcategoryerr(false)
+      }
+       //desturcture the inputs from state
+  const {Unit_title,Rent,property_id,Initial_deposit,status} = FormData
     const [selectionModel, setSelectionModel] = useState([]);
-    const [statuserr, setstatuserr] = useState(false)
+    const [categoryerr, setcategoryerr] = useState(false)
     const [descerr, setdescerr] = useState(false)
+    const [descerr2, setdescerr2] = useState(false)
+    const [descerr3, setdescerr3] = useState(false)
+    const [AllCategories, setAllCategories] = useState([])
     const [AllStatus, setAllStatus] = useState([])
+    const [AllProperties, setAllProperties] = useState([])
     const [deleteBtn, setdelete] = useState(false)
 
     const [description, setdescription] = useState('')
-    const [status, setStatus] = useState('')
+    const [category, setCategory] = useState('')
     const [loading, setloading] = useState(false)
     const [loading2, setloading2] = useState(true)
-    const onChangeStatus = (e) => {
-        setStatus(e.target.value);
-        setstatuserr(false)
-    }
-    const onChangeDescrpition = (e) => {
-        setdescription(e.target.value);
-        setdescerr(false)
-    }
-    const onSubmitPropertyStatus = () => {
+    const onSubmitCategory = () => {
 
-        if (status === '') {
-            setstatuserr(true)
+        if (FormData.Unit_title === '') {
+            console.log(FormData)
+            setcategoryerr(true)
             return;
         }
-        if (description === '') {
+        if (FormData.property_id === '') {
+            setdescerr2(true)
+            return;
+        } 
+        if (FormData.initial_deposit === '') {
+            setdescerr3(true)
+            return;
+        }
+        if (FormData.Rent === '') {
             setdescerr(true)
             return;
         }
-
         setloading(true)
-        setstatuserr(false)
-        setdescerr(false)
-        AuthorizePostRequest('api/status', {
-            status_name: status,
-            description,
-        })
-            .then((response) => {
+        console.log('FormData', FormData)
+        AuthorizePostRequest('api/propertyunit', FormData).then((response) => {
                 if (response.status === 201) {
                     toast.success('Successfully Added New Property Type', {
                         position: "bottom-right",
@@ -81,16 +99,12 @@ const PropertyStatus = () => {
                         progress: undefined,
                     });
                     setloading(false)
-                    setStatus('');
+                    setCategory('');
                     setdescription('');
-                    AuthorizeGetRequest('api/status').then((response) => {
+                    AuthorizeGetRequest('api/propertyunit').then((response) => {
                         if (response.status === 200) {
-                            console.log(response.data);
-
-                            setAllStatus(response.data.data)
-
+                            setAllCategories(response.data.data)
                         }
-
                     });
                 } else {
                     toast.error("Oops Contact Admin", {
@@ -111,18 +125,18 @@ const PropertyStatus = () => {
 
 
     }
-    
     const mutateRow = useFakeMutation();
     const handleCellEditCommit = React.useCallback(
         async (params) => {
             try {
                 // Make the HTTP request to save in the backend
-                AuthorizePatchRequest(`api/status/${params.id}`, {
+                AuthorizePatchRequest(`api/propertyunit/${params.id}`, {
                     [params.field]: params.value
                 })
                     .then((response) => {
-                        if (response.status === 200) {
-                            toast.success('Successfully Edited Property Status ', {
+                        console.log(response)
+                        if (response.data.status === 'success') {
+                            toast.success('Successfully Edited Property Unit ', {
                                 position: "bottom-right",
                                 autoClose: 5000,
                                 hideProgressBar: false,
@@ -141,21 +155,19 @@ const PropertyStatus = () => {
                                 draggable: true,
                                 progress: undefined,
                             });
-                            setAllStatus((prev) => [...prev]);
+                            setAllCategories((prev) => [...prev]);
                         }
                     })
                 const newRole = await mutateRow({
                     id: params.id,
                     [params.field]: params.value,
                 });
-                setAllStatus((prev) =>
+                setAllCategories((prev) =>
                     prev.map((row) => (row.id === params.id ? { ...row, ...newRole } : row)),
                 );
 
             } catch (error) {
-                // setSnackbar({ children: 'Error while saving user', severity: 'error' });
-                // Restore the row in case of error
-
+                console.log(error);
             }
         },
         [mutateRow],
@@ -174,10 +186,10 @@ const PropertyStatus = () => {
             return;
         }
         if (selectionModel.length === 1) {
-            AuthorizeDeleteRequest(`api/status/${selectionModel[0]}`)
+            AuthorizeDeleteRequest(`api/propertyunit/${selectionModel[0]}`)
                 .then((response) => {
                     if (response.status === 200) {
-                        toast.success('Successfully Deleted Property Status', {
+                        toast.success('Successfully Deleted Property Unit', {
                             position: "bottom-right",
                             autoClose: 5000,
                             hideProgressBar: false,
@@ -186,11 +198,11 @@ const PropertyStatus = () => {
                             draggable: true,
                             progress: undefined,
                         });
-                        AuthorizeGetRequest('api/status').then((response) => {
+                        AuthorizeGetRequest('api/propertyunit').then((response) => {
                             if (response.status === 200) {
                                 console.log(response.data);
                                 setdelete(false)
-                                setAllStatus(response.data.data)
+                                setAllCategories(response.data.data)
                                 return;
                             }
 
@@ -218,7 +230,7 @@ const PropertyStatus = () => {
         AuthorizeDeleteRequest(`api/Alltypes/${id}`)
             .then((response) => {
                 if (response.status === 200) {
-                    toast.success('Successfully Deleted Property Status', {
+                    toast.success('Successfully Deleted Property Types', {
                         position: "bottom-right",
                         autoClose: 5000,
                         hideProgressBar: false,
@@ -227,11 +239,11 @@ const PropertyStatus = () => {
                         draggable: true,
                         progress: undefined,
                     });
-                    AuthorizeGetRequest('api/status').then((response) => {
+                    AuthorizeGetRequest('api/types').then((response) => {
                         if (response.status === 200) {
                             console.log(response.data);
                             setdelete(false)
-                            setAllStatus(response.data.data)
+                            setAllCategories(response.data.data)
                             return;
                         }
 
@@ -252,21 +264,49 @@ const PropertyStatus = () => {
 
 
     }
+    //handle if cell is checked 
+    const handleCellChange = (value)=>{
+            if (value.length === 0){
+                setdelete(false)
+                setSelectionModel(value);
+            }else{
+                setdelete(true)
+                setSelectionModel(value);
+            }
+    }
     const columns = [
         { field: 'id', headerName: 'Type Id', width: 170, editable: true },
-        { field: 'status_name', headerName: 'Property Status Name', width: 170, editable: true },
-
-        { field: 'description', headerName: 'Status Description', width: 400, editable: true },
+        { field: 'Unit_title', headerName: 'Unit Title', width: 170, editable: true },
+        { field: 'Rent', headerName: 'Rent Amount', width: 150, editable: true },
+        { field: 'Initial_deposit', headerName: 'Initial Deposit', width: 150, editable: true },
+        { field: 'propertyName', headerName: 'Property Name', width: 200, editable: false },
+        { field: 'description', headerName: 'Category Description', width: 100, editable: true },
     ];
+    
     useEffect(() => {
         AuthorizeGetRequest('api/status').then((response) => {
             if (response.status === 200) {
-                console.log(response.data);
                 setAllStatus(response.data.data)
-                setloading2(false)
             }
 
+        }).catch((err)=>{
+            console.log(err)
         });
+        AuthorizeGetRequest('api/propertyunit').then((response)=>{
+            if(response.status ===200){
+                setAllCategories(response.data.data)
+            }
+        }).catch((err)=>{
+            console.log(err)
+        })
+        AuthorizeGetRequest('api/landlordproperty').then((response)=>{
+            if(response.status === 200){
+                setAllProperties(response.data.data)
+                setloading2(false)
+            }
+        }).catch((err)=>{
+            console.log(err)
+        })
 
     }, []);
     if(loading2){
@@ -279,11 +319,11 @@ const PropertyStatus = () => {
     }
     return (
         <div>
-            {!loading && (<>
-                <Card lg={{ minWidth: 275 }}>
+             <h1>Property Units</h1>
+            <Card lg={{ minWidth: 275 }}>
                 <CardContent>
                     <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                        Add New Property Statuses
+                        Add New Property Types
                     </Typography>
 
                     <Typography variant="h5" component="div">
@@ -295,8 +335,46 @@ const PropertyStatus = () => {
                             noValidate
                             autoComplete="off"
                         >
-                            <TextField id="standard-basic" helperText={statuserr ? 'This field is required.' : ''} error={statuserr ? true : false} label="Property Status Name" value={status} onChange={onChangeStatus} variant="standard" required />
-                            <TextField id="standard-basic2" helperText={descerr ? 'This field is required.' : ''} error={descerr ? true : false} label="Status Description" value={description} onChange={onChangeDescrpition}  variant="standard" />
+                            <TextField id="standard-basic" helperText={categoryerr ? 'This field is required.' : ''} error={categoryerr ? true : false} label="Unit Name" name='Unit_title' value={Unit_title} onChange={onChange} variant="standard" />
+                            <TextField inputProps={{inputMode: 'numeric',pattern: '[0-9]*'}} id="standard-basic" helperText={descerr ? 'This field is required.' : ''} error={descerr ? true : false} label="Expected Rental Amount" name="Rent" value={Rent} onChange={onChange} variant="standard" />
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-autowidth-label2" variant="standard"  >Property Type</InputLabel>
+                                <Select
+                                    variant="standard"
+                                    labelId="demo-simple-select-autowidth-label2"
+                                    id="demo-simple-select"
+                                    name="property_id"
+                                    value={property_id}
+                                    onChange={onChange}
+                                    label="Property Type"
+                                >
+                                    {AllProperties.map((element, i) => {
+                                        return (
+                                            <MenuItem key={i} value={element.id}>{element.Property_name}</MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-autowidth-label2" variant="standard"  >Property Type</InputLabel>
+                                <Select
+                                    variant="standard"
+                                    labelId="demo-simple-select-autowidth-label2"
+                                    id="demo-simple-select"
+                                    name="status"
+                                    value={status}
+                                    onChange={onChange}
+                                    label="Property Type"
+                                >
+                                    {AllStatus.map((element, i) => {
+                                        return (
+                                            <MenuItem key={i} value={element.id}>{element.status_name}</MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                            <TextField id="standard-basic" helperText={descerr ? 'This field is required.' : ''} error={descerr ? true : false} label="Expected Initial Deposit Amount" name="Initial_deposit" value={Initial_deposit} onChange={onChange} variant="standard" />
+
                             {loading ? (
                                 <LoadingButton
                                     loading
@@ -307,7 +385,7 @@ const PropertyStatus = () => {
                                     Save
                                 </LoadingButton>
                             ) : (<> <Button variant="contained" color="success" onClick={() => {
-                                onSubmitPropertyStatus();
+                                onSubmitCategory();
                             }} endIcon={<SaveIcon />}>
                                 Save
                             </Button></>)}
@@ -319,7 +397,7 @@ const PropertyStatus = () => {
                         <br />
                     </Typography>
                 </CardContent>
-                {/* <CardActions /> */}
+                <CardActions />
             </Card>
             <div style={{ marginTop: '30px' }}>
                 {deleteBtn && (<>
@@ -330,26 +408,21 @@ const PropertyStatus = () => {
             </div>
             <div style={{ height: 400, width: '100%' }}>
                 <DataGrid
-                    rows={AllStatus}
+                    rows={AllCategories}
                     columns={columns}
                     sortModel={sortModel}
                     onSortModelChange={(model) => setSortModel(model)}
                     onCellEditCommit={handleCellEditCommit}
                     checkboxSelection
+                    disableSelectionOnClick 
                     onSelectionModelChange={(newSelectionModel) => {
-                        setSelectionModel(newSelectionModel);
-                        setdelete(true)
+                        handleCellChange(newSelectionModel);
                         console.log(newSelectionModel);
                     }}
                     selectionModel={selectionModel}
 
                 />
             </div>
-            </>)}
-            
-
         </div>
     )
 }
-
-export default PropertyStatus

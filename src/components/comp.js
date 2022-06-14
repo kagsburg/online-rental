@@ -28,7 +28,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Typography from '@mui/material/Typography';
-import { ClassNames } from '@emotion/react';
+import {useAuth} from '../context/Auth';
 import { toast } from 'react-toastify';
 import logo2 from '../assets/imgs/logo.png';
 import logo1 from '../assets/imgs/low-res-logo.png';
@@ -47,43 +47,47 @@ const LeftbarStyle = makeStyles(_theme => ({
         width:'198px'
     }
 }))
-
+ const userrole = localStorage.getItem('role');
 const SideMenu = (
-    { id, dropdown, title, to, titleIcon, dropdownItems }) => {
-    
+    { role, dropdown, title, to, titleIcon, dropdownItems,user, key }) => {
+        
     const history = useNavigate()
     const [open, setOpen] = React.useState(true);
     const handleClick = () => {
         setOpen(!open);
     };
     if (dropdown === true) {
-        return (
-            <List>
-                    <ListItemButton onClick={handleClick}>
-                        <ListItemIcon>
-                            {titleIcon}
-                        </ListItemIcon>
-                        <ListItemText primary={title} />
-                        {open ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            {dropdownItems.map((task1) => {
-                                return (
-                                    <ListItemButton key={task1.id} onClick={() => history(task1.to)} sx={{ pl: 4 }}>
-                                            <ListItemIcon>
-                                                {task1.titleIcon}
-                                            </ListItemIcon>
-                                            <ListItemText primary={task1.title} />
-                                        </ListItemButton>
-                                )
-                            })}
-                        </List>
-                    </Collapse>
-                </List>
-        )
-    }
-    
+        if(user === role){
+            return (
+                <List>
+                        <ListItemButton onClick={handleClick}>
+                            <ListItemIcon>
+                                {titleIcon}
+                            </ListItemIcon>
+                            <ListItemText primary={title} />
+                            {open ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
+                                {dropdownItems.map((task1) => {
+                                    return (
+                                        <ListItemButton key={task1.id} onClick={() => history(task1.to)} sx={{ pl: 4 }}>
+                                                <ListItemIcon>
+                                                    {task1.titleIcon}
+                                                </ListItemIcon>
+                                                <ListItemText primary={task1.title} />
+                                            </ListItemButton>
+                                    )
+                                })}
+                            </List>
+                        </Collapse>
+                    </List>
+            )
+        }
+       
+    } 
+    if(user === role){
+        
         return (
             <List>
                     <ListItemButton onClick={() => history(to)}>
@@ -94,6 +98,15 @@ const SideMenu = (
                     </ListItemButton>
                 </List>
         );
+    }else{
+        return(
+           <>
+           </>
+        )
+    }
+    
+
+        
     
 
 }
@@ -102,7 +115,7 @@ function ResponsiveDrawer(props) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
-    
+    const auth =useAuth();
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     
   const isMenuOpen = Boolean(anchorEl);
@@ -118,7 +131,6 @@ function ResponsiveDrawer(props) {
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
-
     const drawer = (
         <div>
             <Toolbar />
@@ -170,6 +182,7 @@ function ResponsiveDrawer(props) {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             history('/')
+            auth.logout();
           } else {
             toast.error("Ooops Contact Admin", {
               position: "bottom-right",
@@ -317,6 +330,8 @@ function ResponsiveDrawer(props) {
                     <Divider />
                     {nav.map((task, index) => (
                         <SideMenu
+                            user={userrole}
+                            role={task.role}
                             key={task.id}
                             id={task.id}
                             dropdown={task.dropdown}
