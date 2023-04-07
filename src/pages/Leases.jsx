@@ -23,98 +23,123 @@ import Typography from '@mui/material/Typography';
 import NoRows from '../components/NoRows';
 
 const Leases = () => {
-  const [propertyname, setPropertyname] = useState('');
-  const [propertynameerr, setPropertyerr] = useState(false);
-  const [rentamt, setRentAmt] = useState('');
-  const [location, setLocation] = useState('');
-  const [locationerr, setLocationerr] = useState(false);
-  const [rentamterr, setRentAmterr] = useState(false);
+    //create state variable obj
+    const [lease, setLease] = useState({
+        type_id: "",
+        unit_id: "",
+        tenant_id: "",
+        status: "",
+        lease_start: "",
+        lease_end: "",
+        document: "",
+        leaseRent: "",
+        
+    });
   const [loading, setloading] = useState(false)
-  const [loading2, setloading2] = useState(true)
   const [Alllandlords, setAllLandords] = useState([])
   const [AllTypes, setAllTypes] = useState([])
   const [AllProperties, setAllProperties] = useState([])
-  const [lords, setLord] = useState('');
-  const [typeId, setTypeId] = useState('');
-  const ClearInputs = (e) => {
-      setPropertyname('')
-      setRentAmt('')
-      setLocation('')
-      setLord('')
-      setTypeId('')
-  }
-  const onChangeProperty = (e) => {
-      setPropertyname(e.target.value);
-      setPropertyerr(false)
-  }
-  const onChangeRentAmt = (e) => {
-      setRentAmt(e.target.value);
-      setRentAmterr(false)
-  }
-  const onChangeLocation = (e) => {
-      setLocation(e.target.value);
-      setLocationerr(false)
-  }
-  const handleChangeLord = (event) => {
-      setLord(event.target.value);
+  const [AllUnits, setAllUnits] = useState([])
+  const handleChangeType = (e) => {
+    setLease((prev)=>({ ...prev, [e.target.name]: e.target.value }));      
   };
-  const handleChangeType = (event) => {
-      setTypeId(event.target.value);
-  };
+  //function to handle upload of document
+    const handleUpload = (e) => {
+        setLease((prev)=>({ ...prev, document: e.target.files[0] }));
+    }
+ 
   const onSubmitProperty = (e) => {
+    // e.preventDefault();
       setloading(true)
-      if (propertyname === '' || lords === '' || typeId === '') {
-          setPropertyerr(true)
-      }
-      console.log(lords)
-      console.log(typeId)
-      AuthorizePostRequest('api/property', {
-          Property_name: propertyname,
-          Rent_amount: rentamt,
-          Location: location,
-          landlord_id: lords,
-          Type_id: typeId
-      })
-          .then((response) => {
-              if (response.status === 201) {
-                  toast.success('Successfully Added New Property', {
-                      position: "bottom-right",
-                      autoClose: 5000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                  });
-                  setloading(false)
-                  ClearInputs()
-                  AuthorizeGetRequest('api/landlordproperty').then((response) => {
-                      if (response.status === 200) {
-                          console.log(response.data);
-                          setAllProperties(response.data.data)
-                         
-                      }
-
-                  });
-              } else {
-                  toast.error("Oops Contact Admin", {
-                      position: "bottom-right",
-                      autoClose: 5000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                  });
-              }
-          })
-          .catch((error) => {
-              console.log(error.message)
-              console.log(error.errors)
-          })
+      //validate form data 
+        if (lease.type_id === "" || lease.unit_id === "" || lease.tenant_id === "" || lease.lease_start === "" || lease.lease_end === ""  || lease.leaseRent === "") {
+            toast.error("Please fill all fields");
+            setloading(false)
+            return;
+        }
+        const formData = new FormData();
+        formData.append("type_id", lease.type_id);
+        formData.append("unit_id", lease.unit_id);
+        formData.append("tenant_id", lease.tenant_id);
+        formData.append("status", lease.status);
+        formData.append("lease_start", lease.lease_start);
+        formData.append("lease_end", lease.lease_end);
+        formData.append("document", lease.document);
+        // formData.append("leaseRent", lease.leaseRent);
+    console.log(Object.fromEntries(formData.entries()));
+    //   AuthorizePostRequest('api/tenants', formData)
+    //       .then((response) => {
+    //           if (response.status === 201) {
+    //               toast.success('Successfully Added New Property', {
+    //                   position: "top-right",
+    //                   autoClose: 5000,
+    //                   hideProgressBar: false,
+    //                   closeOnClick: true,
+    //                   pauseOnHover: true,
+    //                   draggable: true,
+    //                   progress: undefined,
+    //               });
+    //               setloading(false)
+                    
+    //           } else {
+    //               toast.error("Oops Contact Admin", {
+    //                   position: "bottom-right",
+    //                   autoClose: 5000,
+    //                   hideProgressBar: false,
+    //                   closeOnClick: true,
+    //                   pauseOnHover: true,
+    //                   draggable: true,
+    //                   progress: undefined,
+    //               });
+    //           }
+    //       })
+    //       .catch((error) => {
+    //           console.log(error.message)
+    //           console.log(error.errors)
+    //       })
 
   }
+  //create useEffect that gets the properties and unit on load 
+    useEffect(() => {
+        AuthorizeGetRequest('api/property').then((response) => {
+            if (response.status === 200) {
+                // console.log(response.data);
+                setAllProperties(response.data.data)
+                
+            }
+        }).catch((error) => {
+            console.log(error.message)
+        });
+        
+        AuthorizeGetRequest('api/landlord').then((response) => {
+            if (response.status === 200) {
+                // console.log(response.data);
+                setAllLandords(response.data.data)
+            }
+        }).catch((error) => {
+            console.log(error.message)
+        });
+        AuthorizeGetRequest('api/tenants').then((response) => {
+            if (response.status === 200) {
+                // console.log(response.data);
+                setAllTypes(response.data.data)
+            }
+        });
+    }, []);
 
+    useEffect(()=>{
+        if (lease.type_id !== '') {
+        AuthorizeGetRequest(`api/property_unit/${lease.type_id}`).then((response) => {
+            if (response.status === 200) {
+                // console.log(response.data);
+                setAllUnits(response.data.data)
+            }
+        }).catch((error) => {
+            console.log(error.message)
+        });
+    }
+    },[lease.type_id])
+    console.log(lease)
   return (
     <div>
         <h1>Leases</h1>
@@ -133,28 +158,71 @@ const Leases = () => {
                             noValidate
                             autoComplete="off"
                         >
-                            <TextField id="standard-basic" helperText={propertynameerr ? 'This field is required.' : ''} error={propertynameerr ? true : false} label="Property Name" value={propertyname} onChange={onChangeProperty} variant="standard" />
-                            <TextField id="standard-basic" helperText={rentamterr ? 'This field is required.' : ''} error={rentamterr ? true : false} label="Rent Amount" value={rentamt} onChange={onChangeRentAmt} variant="standard" />
-                            <TextField id="standard-basic" helperText={locationerr ? 'This field is required.' : ''} error={locationerr ? true : false} label="Property Location" value={location} onChange={onChangeLocation} variant="standard" />
-                            <TextField id="standard-basic" label="Start Date" type="date"  sx={{ width: 220 }}InputLabelProps={{shrink: true,}}/>
                             <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-autowidth-label2" variant="standard"  >Property Type</InputLabel>
+                                <InputLabel id="demo-simple-select-autowidth-label2" variant="standard" sx={{ fontSize:'15px'}} >Select Property</InputLabel>
+                                <Select
+                                    variant="standard"
+                                    name="type_id"
+                                    labelId="demo-simple-select-autowidth-label2"
+                                    id="demo-simple-select"
+                                    value={lease.type_id}
+                                    onChange={handleChangeType}
+                                    label="Property Type"
+                                >
+                                    {AllProperties.map((element, i) => {
+                                        return (
+                                            <MenuItem key={i} value={element.id}>{element.Property_name}</MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                                    {/*only show the unit if the selected Property type has units attached to it   */}
+                                    {AllUnits.length > 0 && <>
+                                        <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-autowidth-label2" variant="standard" sx={{ fontSize:'12px'}} >Select Property Units</InputLabel>
+                                <Select
+                                    variant="standard"
+                                    name="unit_id"
+                                    labelId="demo-simple-select-autowidth-label2"
+                                    id="demo-simple-select"
+                                    value={lease.unit_id}
+                                    onChange={handleChangeType}
+                                    label="Property Type Units"
+                                >
+                                    {AllUnits.map((element, i) => {
+                                        return (
+                                            <MenuItem key={i} value={element.id}>{element.Unit_title}</MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                                    </>}
+                            <TextField id="standard-basic"  label="Rent Amount" value={lease.leaseRent}name="leaseRent" onChange={handleChangeType} variant="standard" />
+                            
+                            <TextField id="standard-basic" onChange={handleChangeType} name="lease_start" label="Start Date" type="date"  sx={{ width: 220 }}InputLabelProps={{shrink: true,}}/>
+                            <TextField id="standard-basic" onChange={handleChangeType} name="lease_end" label="End Date" type="date"  sx={{ width: 220 }}InputLabelProps={{shrink: true,}}/>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-autowidth-label2" variant="standard"  >Tenants</InputLabel>
                                 <Select
                                     variant="standard"
                                     labelId="demo-simple-select-autowidth-label2"
                                     id="demo-simple-select"
-                                    value={typeId}
+                                    name='tenant_id'
+                                    value={lease.tenant_id}
                                     onChange={handleChangeType}
                                     label="Property Type"
                                 >
                                     {AllTypes.map((element, i) => {
                                         return (
-                                            <MenuItem key={i} value={element.id}>{element.category}</MenuItem>
+                                            <MenuItem key={i} value={element.TenantId}>{element.TenantName}</MenuItem>
                                         )
                                     })}
                                 </Select>
                             </FormControl>
-
+                                 <Button variant="contained" onChange ={handleUpload} component="label">
+                                    Upload document
+                                    <input hidden multiple type="file"  />
+                                    </Button>
                             {loading ? (
                                 <LoadingButton
                                     loading

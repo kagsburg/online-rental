@@ -49,7 +49,7 @@ const LeftbarStyle = makeStyles(_theme => ({
 }))
  const userrole = localStorage.getItem('role');
 const SideMenu = (
-    { role, dropdown, title, to, titleIcon, dropdownItems,user, key }) => {
+    { role, dropdown, title, to, titleIcon, dropdownItems,user }) => {
         
     const history = useNavigate()
     const [open, setOpen] = React.useState(true);
@@ -253,7 +253,7 @@ function ResponsiveDrawer(props) {
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="error">
+                            <Badge badgeContent={0} color="error">
                                 <MailIcon />
                             </Badge>
                         </IconButton>
@@ -262,7 +262,7 @@ function ResponsiveDrawer(props) {
                             aria-label="show 17 new notifications"
                             color="inherit"
                         >
-                            <Badge badgeContent={17} color="error">
+                            <Badge badgeContent={0} color="error">
                                 <NotificationsIcon />
                             </Badge>
                         </IconButton>
@@ -284,7 +284,7 @@ function ResponsiveDrawer(props) {
                             aria-label="show more"
                             aria-controls={`mobileMenuId`}
                             aria-haspopup="true"
-                            onClick={`handleMobileMenuOpen`}
+                            // onClick={`handleMobileMenuOpen`}
                             color="inherit"
                         >
                             <MoreIcon />

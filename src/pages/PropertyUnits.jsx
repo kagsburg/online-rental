@@ -338,7 +338,7 @@ export default function PropertyUnits() {
                             <TextField id="standard-basic" helperText={categoryerr ? 'This field is required.' : ''} error={categoryerr ? true : false} label="Unit Name" name='Unit_title' value={Unit_title} onChange={onChange} variant="standard" />
                             <TextField inputProps={{inputMode: 'numeric',pattern: '[0-9]*'}} id="standard-basic" helperText={descerr ? 'This field is required.' : ''} error={descerr ? true : false} label="Expected Rental Amount" name="Rent" value={Rent} onChange={onChange} variant="standard" />
                             <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-autowidth-label2" variant="standard"  >Property Type</InputLabel>
+                                <InputLabel id="demo-simple-select-autowidth-label2" variant="standard"  >Property </InputLabel>
                                 <Select
                                     variant="standard"
                                     labelId="demo-simple-select-autowidth-label2"
@@ -346,7 +346,7 @@ export default function PropertyUnits() {
                                     name="property_id"
                                     value={property_id}
                                     onChange={onChange}
-                                    label="Property Type"
+                                    label="Property "
                                 >
                                     {AllProperties.map((element, i) => {
                                         return (
@@ -356,7 +356,7 @@ export default function PropertyUnits() {
                                 </Select>
                             </FormControl>
                             <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-autowidth-label2" variant="standard"  >Property Type</InputLabel>
+                                <InputLabel id="demo-simple-select-autowidth-label2" variant="standard"  >Property Status</InputLabel>
                                 <Select
                                     variant="standard"
                                     labelId="demo-simple-select-autowidth-label2"
@@ -364,7 +364,7 @@ export default function PropertyUnits() {
                                     name="status"
                                     value={status}
                                     onChange={onChange}
-                                    label="Property Type"
+                                    label="Property Status"
                                 >
                                     {AllStatus.map((element, i) => {
                                         return (

@@ -62,7 +62,7 @@ export default function SignInSide() {
       useEffect(() => {
         AuthorizeGetRequest('api/ValidateToken').then((response) => {
           if (response.status === 200) {
-            history('/dashboard/Add_Roles');
+            history('/dashboard/property_type');
           }
         });
       }, []);
@@ -120,7 +120,7 @@ export default function SignInSide() {
           draggable: true,
           progress: undefined,
         });
-        const accessToken = response.data.token;
+        // const accessToken = response.data.token;
         const roles = response.data.user.role_id;
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('username', response.data.user.Full_name);
@@ -184,7 +184,7 @@ export default function SignInSide() {
     setLoading(true);
     AuthorizeLoginRequest('api/user', formSignup).then((response) => {
       console.log('login', response.data);
-      if (response.status == 201) {
+      if (response.status === 201) {
         console.log('login', response.data);
         toast.success('Successfully Registered as user', {
           position: 'bottom-right',

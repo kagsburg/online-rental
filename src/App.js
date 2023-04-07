@@ -39,19 +39,10 @@ function App() {
         </Route>
       </Route>
     </Routes>
-      {/* <Route  path="/login" >
-        <Login/>
-      </Route>
-      <Route path="/register">
-      {localStorage.getItem('token')? <Redirect to="/admin/dashboard"/>:<Register/>}
-      </Route>
 
-      <PrivateRoutes path="/admin/dashboard"/>
-      
-      <PrivateRoutes path="/property_type"/> */}
       
       <ToastContainer
-        position="bottom-right"
+        position="top-right"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
